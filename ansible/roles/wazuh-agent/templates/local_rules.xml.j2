@@ -1,0 +1,40 @@
+<group name="lateral_movement,">
+
+  <!-- Alert: SMB traffic from DMZ to Internal (Lateral Movement) -->
+  <rule id="100100" level="12">
+    <if_sid>550</if_sid>
+    <field name="alert.log">SMB</field>
+    <match>from DMZ.*to Internal</match>
+    <description>Lateral movement attempt: SMB traffic from DMZ to Internal</description>
+    <group>ssh,attacks,lateral_movement</group>
+  </rule>
+
+  <!-- Alert: LDAP traffic from DMZ to Internal (Lateral Movement) -->
+  <rule id="100101" level="12">
+    <if_sid>550</if_sid>
+    <field name="alert.log">LDAP</field>
+    <match>from DMZ.*to Internal</match>
+    <description>Lateral movement attempt: LDAP traffic from DMZ to Internal</description>
+    <group>ldap,attacks,lateral_movement</group>
+  </rule>
+
+  <!-- Alert: MySQL traffic from DMZ to Internal (Lateral Movement) -->
+  <rule id="100102" level="12">
+    <if_sid>550</if_sid>
+    <field name="alert.log">MySQL</field>
+    <match>from DMZ.*to Internal</match>
+    <description>Lateral movement attempt: MySQL traffic from DMZ to Internal</description>
+    <group>database,attacks,lateral_movement</group>
+  </rule>
+
+  <!-- Alert: Multiple failed login attempts from DMZ -->
+  <rule id="100103" level="14">
+    <if_sid>100100</if_sid>
+    <match>failed login|authentication failure</match>
+    <timeframe>60</timeframe>
+    <frequency>5</frequency>
+    <description>Multiple authentication failures from DMZ - possible brute force attack</description>
+    <group>authentication,attacks,lateral_movement</group>
+  </rule>
+
+</group>

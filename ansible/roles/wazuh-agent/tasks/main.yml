@@ -1,0 +1,45 @@
+---
+# Rol wazuh-agent: Configure Wazuh SIEM to receive logs
+
+- name: Deploy Wazuh container (SIEM)
+  template:
+    src: docker-compose-wazuh.yml.j2
+    dest: /opt/wazuh/docker-compose.yml
+
+- name: Start Wazuh service
+  docker_compose:
+    project_src: /opt/wazuh
+    project_name: wazuh
+    state: present
+
+- name: Wait for Wazuh to be ready
+  uri:
+    url: http://localhost:55000
+    method: GET
+    status_code: 200
+  retries: 15
+  delay: 10
+  until: wazuh_status.status_code == 200
+  register: wazuh_status
+  ignore_errors: true
+
+- name: Configure Wazuh to receive VyOS logs
+  template:
+    src: ossec.conf.j2
+    dest: /opt/wazuh/docker-compose.yml.d/ossec.conf
+  notify: Restart Wazuh
+
+- name: Configure Wazuh rules for lateral movement detection
+  template:
+    src: local_rules.xml.j2
+    dest: /opt/wazuh/rules/local_rules.xml
+  notify: Restart Wazuh
+
+- name: Ensure log directories exist for volume mounts
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /var/ossec/logs
+    - /var/ossec/alerts
+  notify: Set correct permissions

@@ -1,0 +1,29 @@
+---
+# Ansible Lint configuration
+# Ignore rules that are not applicable to this lab
+
+skip_list:
+  # Módulos docker_compose no están disponibles en todas las versiones
+  experimental: false
+  # Evitar warnings de deprecación
+  yaml:
+    - line-length
+  # Saltar variables no declaradas (usamos defaults)
+  var-naming:
+    - j2-yaml-undefined-variable
+
+# Custom rules
+rules:
+  # Allow docker_compose module without collection
+  name:
+    condition:
+      - any:
+          - startsWith:
+              - name: docker_compose
+            value: role
+
+# Ignore specific files
+exclude_paths:
+  - '.git/'
+  - 'vendor/'
+  - '.venv/'

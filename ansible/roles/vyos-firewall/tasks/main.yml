@@ -1,0 +1,59 @@
+---
+# Rol vyos-firewall: Configura firewall y reglas de seguridad
+
+- name: Ensure config directory exists
+  file:
+    path: /config
+    state: directory
+    owner: vyos
+    group: vyos
+
+- name: Copy firewall configuration
+  template:
+    src: firewall_config.j2
+    dest: /config/firewall.conf
+    owner: vyos
+    group: vyos
+  notify: Apply firewall rules
+
+- name: Copy Suricata IDS configuration
+  template:
+    src: suricata.yaml.j2
+    dest: /etc/suricata/suricata.yaml
+    owner: root
+    group: root
+  notify: Restart Suricata
+
+- name: Configure zone-based traffic policies
+  template:
+    src: zone_policy.j2
+    dest: /config/zone_policy.conf
+    owner: vyos
+    group: vyos
+  notify: Apply zone policies
+
+- name: Ensure logging is enabled for blocked traffic
+  lineinfile:
+    path: /etc/rsyslog.d/blocked_traffic.conf
+    line: 'local0.* /var/log/blocked_traffic.log'
+    create: yes
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create log rotation for firewall logs
+  copy:
+    content: |
+      /var/log/blocked_traffic.log {
+        daily
+        rotate 7
+        compress
+        delaycompress
+        missingok
+        notifempty
+        create 0644 root root
+      }
+    dest: /etc/logrotate.d/blocked_traffic
+    owner: root
+    group: root
+    mode: '0644'

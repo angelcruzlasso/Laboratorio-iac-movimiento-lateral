@@ -1,0 +1,28 @@
+---
+# Variables por defecto del rol docker-services
+
+# Juice Shop configuration
+juiceshop_version: "latest"
+juiceshop_port: 3000
+
+# Kali configuration  
+kali_version: "rolling"
+kali_tools:
+  - nmap
+  - nikto
+  - sqlmap
+  - hydra
+  - metasploit-framework
+  - nmap
+
+# Docker networks
+docker_networks:
+  dmz:
+    name: dmz-net
+    subnet: 10.0.10.0/24
+  attacker:
+    name: attacker-net
+    subnet: 10.0.30.0/24
+  internal:
+    name: internal-net
+    subnet: 10.0.20.0/24

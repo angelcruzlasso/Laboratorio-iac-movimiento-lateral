@@ -1,0 +1,28 @@
+---
+# Playbook maestro para el Laboratorio de Movimiento Lateral
+# Orquesta todos los roles necesarios para configurar el entorno
+
+- name: Configure common hardening for all nodes
+  hosts: all
+  become: yes
+  roles:
+    - common
+
+- name: Configure VyOS Firewall
+  hosts: vyos
+  become: yes
+  roles:
+    - vyos-firewall
+
+- name: Deploy Docker services (Juice Shop, Samba AD, MySQL)
+  hosts: docker_nodes
+  become: yes
+  roles:
+    - docker-services
+    - database
+
+- name: Configure Wazuh SIEM
+  hosts: wazuh
+  become: yes
+  roles:
+    - wazuh-agent

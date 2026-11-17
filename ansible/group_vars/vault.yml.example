@@ -1,0 +1,22 @@
+# Ansible Vault - Cifrado con: ansible-vault encrypt ansible/group_vars/vault.yml
+# Copiar a vault.yml antes de usar
+# Rellenar con contraseñas reales y cifrar
+
+# VyOS Admin Password
+vyos_admin_password: "CHANGE_ME_VYOS_PASSWORD"
+
+# Samba AD Admin Password
+samba_admin_password: "CHANGE_ME_SAMBA_PASSWORD"
+samba_domain: "LAB"
+samba_realm: "LAB.LOCAL"
+
+# MySQL Passwords
+mysql_root_password: "CHANGE_ME_MYSQL_ROOT_PASSWORD"
+mysql_password: "CHANGE_ME_MYSQL_PASSWORD"
+
+# Wazuh
+wazuh_api_password: "CHANGE_ME_WAZUH_PASSWORD"
+elasticsearch_password: "CHANGE_ME_ES_PASSWORD"
+
+# Kali SSH Key Passphrase (optional)
+kali_ssh_key_passphrase: "CHANGE_ME_KALI_PASSPHRASE"

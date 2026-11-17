@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  kali:
+    image: kalilinux/kali-rolling
+    container_name: kali
+    restart: unless-stopped
+    privileged: true
+    networks:
+      attacker-net:
+        ipv4_address: 10.0.30.10
+    command: /bin/bash -c "while true; do sleep 3600; done"
+    healthcheck:
+      test: ["CMD", "pgrep", "kali"]
+      interval: 10s
+      timeout: 5s
+     Retries: 3
+
+networks:
+  attacker-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.30.0/24
+          gateway: 10.0.30.1

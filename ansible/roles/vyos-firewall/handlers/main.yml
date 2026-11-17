@@ -1,0 +1,21 @@
+---
+# Handlers para el rol vyos-firewall
+
+- name: Apply firewall rules
+  command: /usr/bin/vyos-cfg-cmd begin
+  command: /usr/bin/vyos-cfg-cmd commit
+  command: /usr/bin/vyos-cfg-cmd end
+  listen: Apply firewall rules
+
+- name: Apply zone policies
+  command: /usr/bin/vyos-cfg-cmd begin
+  command: /usr/bin/vyos-cfg-cmd commit
+  command: /usr/bin/vyos-cfg-cmd end
+  listen: Apply zone policies
+
+- name: Restart Suricata
+  service:
+    name: suricata
+    state: restarted
+    enabled: yes
+  listen: Restart Suricata

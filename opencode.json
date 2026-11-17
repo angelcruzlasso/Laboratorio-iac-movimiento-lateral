@@ -1,0 +1,8 @@
+{
+  "mcpServers": {},
+  "agentMode": "code",
+  "rules": {
+    "workingDirectory": "/home/angel/Documentos/universidad/anio/04/semestre/02/teleinformatica2/proyecto_final/Lab-movimiento-lateral",
+    "projectType": "infrastructure-lab"
+  }
+}

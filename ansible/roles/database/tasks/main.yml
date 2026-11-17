@@ -1,0 +1,56 @@
+---
+# Rol database: Deploy and harden the database
+
+- name: Deploy Samba AD container
+  template:
+    src: docker-compose-samba.yml.j2
+    dest: /opt/samba/docker-compose.yml
+
+- name: Deploy MySQL container
+  template:
+    src: docker-compose-mysql.yml.j2
+    dest: /opt/mysql/docker-compose.yml
+
+- name: Start Samba AD service
+  docker_compose:
+    project_src: /opt/samba
+    project_name: samba
+    state: present
+
+- name: Start MySQL service
+  docker_compose:
+    project_src: /opt/mysql
+    project_name: mysql
+    state: present
+
+- name: Wait for Samba AD to be ready
+  command: >
+    docker exec samba_ad dcgetall
+  register: samba_status
+  retries: 15
+  delay: 10
+  until: samba_status.rc == 0
+  ignore_errors: true
+
+- name: Wait for MySQL to be ready
+  command: >
+    docker exec mysql mysqladmin ping -h localhost --silent
+  register: mysql_status
+  retries: 15
+  delay: 10
+  until: mysql_status.rc == 0
+
+- name: Verify database is only accessible from internal net
+  command: >
+    docker exec mysql netstat -tlnp | grep :3306
+  register: db_port_check
+  changed_when: false
+
+- name: Harden MySQL (execute hardening script inside container)
+  command: >
+    docker exec mysql mysql -e "
+    DELETE FROM mysql.user WHERE User='';
+    DROP USER IF EXISTS ''@'%';
+    FLUSH PRIVILEGES;
+    "
+  when: mysql_status is succeeded

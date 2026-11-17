@@ -1,0 +1,52 @@
+---
+# Rol common: Hardening básico para todos los nodos
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install common packages
+  apt:
+    name:
+      - curl
+      - wget
+      - net-tools
+      - iproute2
+      - dnsutils
+      - vim
+      - sudo
+    state: present
+
+- name: Create admin group if not exists
+  group:
+    name: admin
+    state: present
+
+- name: Allow admin users to run sudo without password
+  copy:
+    dest: /etc/sudoers.d/admins
+    content: |
+      %admin ALL=(ALL) NOPASSWD:ALL
+      %wheel ALL=(ALL) NOPASSWD:ALL
+    owner: root
+    group: root
+    mode: '0440'
+
+- name: Harden SSH configuration
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^{{ item.regexp }}'
+    line: "{{ item.line }}"
+    backup: yes
+  loop:
+    - { regexp: 'PermitRootLogin', line: 'PermitRootLogin no' }
+    - { regexp: 'PasswordAuthentication', line: 'PasswordAuthentication no' }
+    - { regexp: 'PubkeyAuthentication', line: 'PubkeyAuthentication yes' }
+    - { regexp: 'PermitEmptyPasswords', line: 'PermitEmptyPasswords no' }
+
+- name: Restart SSH service
+  service:
+    name: ssh
+    state: restarted
+    enabled: yes

@@ -1,0 +1,23 @@
+---
+# Variables por defecto del rol wazuh-agent
+
+# Wazuh configuration
+wazuh_version: "4.9.3"
+wazuh_dashboard: "kibana"
+wazuh_cluster: "single-node"
+
+# Alert thresholds
+failed_login_threshold: 5
+time_window_seconds: 60
+
+# Lateral movement detection rules
+lateral_detection_rules:
+  - rule_name: "smb_lateral"
+    port: 445
+    level: 12
+  - rule_name: "ldap_lateral"
+    port: 389
+    level: 12
+  - rule_name: "mysql_lateral"
+    port: 3306
+    level: 12

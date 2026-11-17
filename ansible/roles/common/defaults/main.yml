@@ -1,0 +1,11 @@
+---
+# Variables por defecto del rol common
+
+# Paquetes a instalar
+common_packages:
+  - curl
+  - wget
+  - net-tools
+  - iproute2
+  - vim
+  - sudo

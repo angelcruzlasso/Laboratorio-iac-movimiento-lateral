@@ -1,0 +1,71 @@
+---
+# Rol docker-services: Deploy Docker containers for the lab
+
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Start and enable Docker
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Install Docker Compose
+  get_url:
+    url: https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+
+- name: Create Docker networks
+  command: >
+    docker network create --driver bridge
+    --subnet={{ item.subnet }}
+    --gateway={{ item.gateway }}
+    {{ item.name }}
+  loop:
+    - { name: "dmz-net", subnet: "10.0.10.0/24", gateway: "10.0.10.1" }
+    - { name: "attacker-net", subnet: "10.0.30.0/24", gateway: "10.0.30.1" }
+    - { name: "internal-net", subnet: "10.0.20.0/24", gateway: "10.0.20.1" }
+  ignore_errors: true
+
+- name: Copy docker-compose file for Juice Shop
+  template:
+    src: docker-compose-juiceshop.yml.j2
+    dest: /opt/juiceshop/docker-compose.yml
+
+- name: Copy docker-compose file for Kali
+  template:
+    src: docker-compose-kali.yml.j2
+    dest: /opt/kali/docker-compose.yml
+
+- name: Deploy Juice Shop container
+  docker_compose:
+    project_src: /opt/juiceshop
+    project_name: juiceshop
+    state: present
+    recreated: yes
+
+- name: Deploy Kali container
+  docker_compose:
+    project_src: /opt/kali
+    project_name: kali
+    state: present
+    recreated: yes
+
+- name: Verify Juice Shop is running
+  command: >
+    docker exec juiceshop_juiceshop_1 curl -s -o /dev/null -w "%{http_code}" http://localhost:3000
+  register: juice_status
+  retries: 10
+  delay: 5
+  until: juice_status.stdout == "200"
+
+- name: Verify Kali is running
+  command: docker ps --format "{{ '{{.Names}}' }}" | grep kali
+  register: kali_status
+  retries: 5
+  delay: 5

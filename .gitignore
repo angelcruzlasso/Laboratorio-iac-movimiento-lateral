@@ -1,0 +1,37 @@
+# Ansible
+*.retry
+ansible.tfstate
+ansible.tfstate.backup
+inventory/*.json
+!ansible/inventory/hosts.ini
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+terraform.lock.hcl
+!terraform/environments/lab/.terraform.lock.hcl
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/episodic/*.md
+logs/terraform.log
+logs/ansible.log
+
+# Environment
+.env
+.envrc
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,45 @@
+# Suricata IDS Configuration
+# Detection rules for lateral movement
+
+# Logging configuration
+logging:
+  outputs:
+    - console:
+        enabled: yes
+    - file:
+        enabled: yes
+        filename: /var/log/suricata/suricata.log
+
+# Default rule directory
+default-rule-path: /etc/suricata/rules
+
+# Detection thresholds
+detect:
+  profile: medium
+  custom-values:
+    max-pending-packets: 8192
+    defrag:
+      prealloc: 64
+    streams:
+      prealloc: 8192
+      midstream: 32
+    reassembly:
+      memcap: 134217728
+      depth: 10
+      toserver-chunk: 3
+
+# Lua script for custom rules
+lua:
+  scripts: /etc/suricata/lua-scripts/
+
+# Host os detection
+host-os-policy:
+  encrypted:
+    - 0.0.0.0/0
+
+# Custom rules file for lateral movement detection
+# File: /etc/suricata/rules/lateral_movement.rules
+# Rules:
+#   Alert on SMB traffic from DMZ to Internal (port 445)
+#   Alert on LDAP traffic from DMZ to Internal (port 389)
+#   Alert on MySQL traffic from DMZ to Internal (port 3306)

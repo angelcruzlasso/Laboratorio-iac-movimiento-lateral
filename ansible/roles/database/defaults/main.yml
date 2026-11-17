@@ -1,0 +1,13 @@
+---
+# Variables por defecto del rol database
+
+# Samba AD credentials
+samba_domain: "LAB"
+samba_realm: "LAB.LOCAL"
+samba_admin_password: "ChangeMe123!"
+
+# MySQL credentials
+mysql_root_password: "ChangeMe456!"
+mysql_database: "labdb"
+mysql_user: "labuser"
+mysql_user_password: "ChangeMe789!"

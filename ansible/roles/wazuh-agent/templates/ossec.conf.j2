@@ -1,0 +1,37 @@
+<ossec_config>
+  <global>
+    <frequency>30</frequency>
+    <alert_new_files>yes</alert_new_files>
+  </global>
+
+  <syscheck>
+    <frequency>3600</frequency>
+    <directories check_all="yes">/etc</directories>
+    <directories check_sum="yes">/bin,/sbin,/usr/bin,/usr/sbin</directories>
+  </syscheck>
+
+  <rootcheck>
+    <frequency>3600</frequency>
+  </rootcheck>
+
+  <localfile>
+    <log_format>syslog</log_format>
+    <location>/var/log/blocked_traffic.log</location>
+  </localfile>
+
+  <localfile>
+    <log_format>syslog</log_format>
+    <location>/var/log/suricata/eve.json</location>
+  </localfile>
+
+  <localfile>
+    <log_format>syslog</log_format>
+    <location>/var/log/samba/*.log</location>
+  </localfile>
+
+  <remote>
+    <connection>secure</connection>
+    <port>9000</port>
+    <protocol>tcp</protocol>
+  </remote>
+</ossec_config>

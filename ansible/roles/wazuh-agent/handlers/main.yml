@@ -1,0 +1,15 @@
+---
+# Handlers para el rol wazuh-agent
+
+- name: Restart Wazuh
+  command: docker-compose -f /opt/wazuh/docker-compose.yml restart
+  listen: Restart Wazuh
+
+- name: Set correct permissions
+  file:
+    path: /var/ossec
+    owner: 997
+    group: 997
+    state: directory
+    mode: '0750'
+  listen: Set correct permissions

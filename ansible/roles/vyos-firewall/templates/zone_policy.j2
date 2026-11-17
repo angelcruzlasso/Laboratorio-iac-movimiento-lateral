@@ -1,0 +1,68 @@
+# Zone-Based Firewall Policies
+# Matrix from SDD Section 3.1
+
+# Management Zone
+# Purpose: Hipervisor, Ansible, SIEM (Wazuh)
+# Rule: #7 - SSH/API Allow from Management to all
+# Rule: #8 - Deny all to Management
+zone-name mgmt
+from mgmt to all
+  action accept
+  port 22, 80, 443
+from all to mgmt
+  action drop
+  log enable
+  description "Management zone isolated"
+
+# Attacker Zone  
+# Purpose: Kali/Phantom - punto de partida del agente
+# Rule: #1 - Allow HTTP/HTTPS to DMZ
+# Rule: #6 - Deny all to Internal
+zone-name attacker
+from attacker to dmz
+  action accept
+  port 80, 443
+  protocol tcp
+from attacker to internal
+  action drop
+  log enable
+  description "Attacker isolated from Internal"
+from attacker to mgmt
+  action drop
+  log enable
+
+# DMZ Zone
+# Purpose: Juice Shop - punto de entrada
+# Rule: #2 - Deny SMB/LDAP to Internal
+# Rule: #3 - Deny MySQL to Internal
+zone-name dmz
+from dmz to internal
+  action drop
+  port 389, 445, 3306
+  protocol tcp
+  log enable
+  description "DENY lateral movement from DMZ"
+from internal to dmz
+  action accept
+  port 80, 443
+  protocol tcp
+from dmz to wan
+  action drop
+  log enable
+
+# Internal Zone
+# Purpose: Samba AD + Base de Datos
+# Rule: #4 - Allow to DMZ (consumo)
+zone-name internal
+from internal to dmz
+  action accept
+  port 80, 443
+from internal to wan
+  action accept
+  port 80, 443, 53
+  protocol tcp
+from internal to internal
+  action accept
+
+# WAN Zone
+zone-name wan

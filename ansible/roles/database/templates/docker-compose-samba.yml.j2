@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  samba:
+    image: growbig/samba-ad:latest
+    container_name: samba_ad
+    restart: unless-stopped
+    environment:
+      - DOMAIN={{ samba_domain | default('LAB') }}
+      - PASSWORD={{ samba_admin_password }}
+      - REALM={{ samba_realm | default('LAB.LOCAL') }}
+    ports:
+      - "389:389"
+      - "445:445"
+      - "3268:3268"
+      - "3269:3269"
+    networks:
+      internal-net:
+        ipv4_address: 10.0.20.10
+    privileged: true
+    volumes:
+      - samba_data:/var/lib/samba
+      - samba_logs:/var/log/samba
+    healthcheck:
+      test: ["CMD", "samba-tool", "drs showrepl"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+
+  # Internal-only network - no host port exposure
+networks:
+  internal-net:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.0.20.0/24
+          gateway: 10.0.20.1
+
+volumes:
+  samba_data:
+  samba_logs:

@@ -1,0 +1,24 @@
+---
+# Variables por defecto del rol vyos-firewall
+
+# Firewall zones
+firewall_zones:
+  - management
+  - attacker
+  - dmz
+  - internal
+  - wan
+
+# Rules to log
+critical_rules_to_log:
+  - "DMZ to Internal SMB"
+  - "DMZ to Internal LDAP"
+  - "Attacker to Internal"
+
+# Network interfaces mapping
+zone_interfaces:
+  management: eth0
+  attacker: eth1
+  dmz: eth2
+  internal: eth3
+  wan: eth4
