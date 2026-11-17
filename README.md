@@ -73,13 +73,31 @@ cd ../scripts
 └── logs/episodic/      # Memoria episódica del agente
 ```
 
-## 🔒 Seguridad
+## 🔒 Seguridad (IMPORTANTE)
 
-⚠️ **IMPORTANTE**: Este laboratorio está diseñado para fines educativos y de prueba.
+⚠️ **Este laboratorio es solo para fines educativos y de prueba.**
 
-- Las contraseñas están en `ansible/group_vars/vault.yml` (cifradas)
-- El archivo `terraform.tfstate` NO debe subirse a Git
-- Usar siempre `ansible-vault` para secretos
+### Archivos SENSIBILES que NO van al repositorio:
+- `terraform.tfstate` - Contiene IPs, IDs, posibles credenciales
+- `ansible/group_vars/vault.yml` - Contraseñas reales (usar vault.yml.example como referencia)
+- Cualquier archivo en `logs/episodic/` con decisiones que no quieras públicas
+
+### Archivos PERMITIDOS en repositorio público:
+- Código Terraform y Ansible
+- Templates y documentación
+- Scripts de utilidad
+- `vault.yml.example` (plantilla sin valores reales)
+
+### Para usar:
+```bash
+# 1. Copiar plantilla y rellenar con tus valores
+cp ansible/group_vars/vault.yml.example ansible/group_vars/vault.yml
+
+# 2. Cifrar con ansible-vault
+ansible-vault encrypt ansible/group_vars/vault.yml
+
+# 3. NUNCA commitear el archivo sin cifrar ni el archivo de estado
+```
 
 ## 🧪 Testing Strategy
 
