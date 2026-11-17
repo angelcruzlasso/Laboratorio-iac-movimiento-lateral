@@ -1,0 +1,18 @@
+# Code owners for pull request reviews
+# GitHub will automatically request reviews from these owners
+
+# Infrastructure
+/terraform/ @angel
+/ansible/roles/vyos-firewall/ @angel
+/ansible/roles/docker-services/ @angel
+
+# Security
+/ansible/roles/database/ @angel
+/ansible/roles/wazuh-agent/ @angel
+/scripts/smoke-test.sh @angel
+
+# Documentation
+/docs/ @angel
+/AGENTS.md @angel
+/INSTRUCTIONS.md @angel
+/README.md @angel
